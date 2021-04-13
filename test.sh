@@ -20,4 +20,9 @@ assert 0 0
 assert 42 42
 assert 255 255
 
+assert 3 1+2
+assert 2 3-1
+assert 5 14-12+3
+assert 1 "12 - 11"
+
 echo OK
