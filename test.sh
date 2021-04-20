@@ -30,4 +30,7 @@ assert 7 "1 + 2 * 3"
 assert 5 "(1 + 2) * (3 / 4) + 5"
 assert 9 "(1 + 2) * ((3 / 4) + 5) - 6"
 
+assert 9 "+ 3 + 6"
+assert 6 "- 3 * 6 + 24"
+
 echo OK

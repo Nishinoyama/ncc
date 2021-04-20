@@ -22,12 +22,14 @@ struct Node {
 
 /**
  * expr    = mul ("+" mul | "-" mul )*
- * mul     = primary ("*" primary | "/" primary "-")*
+ * mul     = unary ("*" unary | "/" unary "-")*
+ * unary   = ("+" | "-")? "*" primary | "/" primary "-")*
  * primary = num | "(" expr ")"
  */
 
 Node* expr();
 Node* mul();
+Node* unary();
 Node* primary();
 
 void gen();
