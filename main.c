@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        fprintf(stderr, "Invaild argument. (except 1 argument(s))");
+        fprintf(stderr, "Invalid argument. (except 1 argument(s))");
         return 1;
     }
 
@@ -13,22 +13,10 @@ int main(int argc, char** argv) {
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
     printf("main:\n");
-    printf("    mov rax, %d\n", expect_number());
 
-    while (!at_eof_token())
-    {
-        // fprintf(stderr, "TOKEN:: %d: %c\n", token->kind, *token->str);
-        if (consume('+')) {
-            printf("    add rax, %d\n", expect_number());
-            continue;
-        }
-        if (consume('-')) {
-            printf("    sub rax, %d\n", expect_number());
-            continue;
-        }
-        unexpected_token_error();
-    }
+    gen(expr());
 
+    printf("    pop rax\n");
     printf("    ret\n");
 
     return 0;

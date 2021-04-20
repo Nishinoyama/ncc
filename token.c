@@ -12,6 +12,7 @@ Token* tokenize(char* p) {
     Token head;
     head.next = NULL;
     Token* cur = &head;
+    user_input = p;
 
     while (*p) {
         if (isspace(*p)) {
@@ -19,7 +20,7 @@ Token* tokenize(char* p) {
             continue;
         }
 
-        if (*p == '+' || *p == '-') {
+        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
             cur = new_token(TK_RESERVED, cur, p);
             p++;
             continue;
@@ -44,13 +45,13 @@ int expect_number() {
         token = token->next;
         return val;
     } else {
-        ncc_error("Number token excepted, got `%s'", token->str);
+        unexpected_token_error();
     }
 }
 
 void expect(char op) {
-    if (token->kind != TK_RESERVED || token->str[0] != op) {
-        ncc_error("Number token excepted, got `%s'", token->str);
+    if (token->kind != TK_RESERVED || *token->str != op) {
+        unexpected_token_error();
     }
     token = token->next;
 }
@@ -68,5 +69,9 @@ bool at_eof_token() {
 }
 
 void unexpected_token_error() {
+    int pos = token->str - user_input;
+    fprintf(stderr, "%s\n", user_input);
+    if(pos > 0) fprintf(stderr, "%*s", pos, " ");
+    fprintf(stderr, "^\n");
     ncc_error("Unexpected Token `%d'\n", token->kind);
 }
