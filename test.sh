@@ -33,4 +33,26 @@ assert 9 "(1 + 2) * ((3 / 4) + 5) - 6"
 assert 9 "+ 3 + 6"
 assert 6 "- 3 * 6 + 24"
 
+assert 0 "1 <= 0"
+assert 1 "0 <= 0"
+
+assert 1 "-1 < 0"
+assert 0 "0 < 0"
+
+assert 1 "0 >= 0"
+assert 0 "-1 >= 0"
+
+assert 1 "1 > 0"
+assert 0 "0 > 0"
+
+assert 1 "0 == 0"
+assert 0 "1 == 0"
+
+assert 0 "0 != 0"
+assert 1 "1 != 0"
+
+
+assert 1 "((1+2)+3 == 1+(2+3)) == ((1*2)*3 == 1*(2*3))"
+assert 1 "((1+2)*3 == 9) == (1+(2*3) > 6)"
+
 echo OK

@@ -1,5 +1,9 @@
 #include "ncc.h"
 
+bool start_with(char* p, char* q) {
+    return memcmp(p, q, strlen(q)) == 0;
+}
+
 Token* new_token(TokenKind kind, int len, Token* cur, char* str) {
     Token* tok = calloc(1, sizeof(Token));
     tok->kind = kind;
@@ -21,9 +25,16 @@ Token* tokenize(char* p) {
             continue;
         }
 
-        if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
+        if (start_with(p, "<=") || start_with(p, ">=") ||
+            start_with(p, "==") || start_with(p, "!=")) {
+            cur = new_token(TK_RESERVED, 2, cur, p);
+            p+=2;
+            continue;
+        }
+
+        if (strchr("+-*/()<>", *p)) {
             cur = new_token(TK_RESERVED, 1, cur, p);
-            p++;
+            p+=1;
             continue;
         }
 

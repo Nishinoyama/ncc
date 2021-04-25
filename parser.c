@@ -16,6 +16,40 @@ Node* new_node_num(int val) {
 }
 
 Node* expr() {
+    return equality();
+}
+
+Node* equality() {
+    Node* node = relational();
+
+    while (1) {
+        if (consume("=="))
+            node = new_node(ND_EQU, node, relational());
+        else if (consume("!="))
+            node = new_node(ND_NEQ, node, relational());
+        else
+            return node;
+    }
+}
+
+Node* relational() {
+    Node* node = add();
+
+    while (1) {
+        if (consume("<="))
+            node = new_node(ND_LEQ, node, add());
+        else if (consume(">="))
+            node = new_node(ND_LEQ, add(), node);
+        else if (consume("<"))
+            node = new_node(ND_LES, node, add());
+        else if (consume(">"))
+            node = new_node(ND_LES, add(), node);
+        else
+            return node;
+    }
+}
+
+Node* add() {
     Node* node = mul();
 
     while (1) {
@@ -84,8 +118,29 @@ void gen(Node* node) {
             printf("    cqo\n");
             printf("    idiv rdi\n");
             break;
+        case ND_EQU:
+            printf("    cmp rax, rdi\n");
+            printf("    sete al\n");
+            printf("    movzb rax, al\n");
+            break;
+        case ND_NEQ:
+            printf("    cmp rax, rdi\n");
+            printf("    setne al\n");
+            printf("    movzb rax, al\n");
+            break;
+        case ND_LES:
+            printf("    cmp rax, rdi\n");
+            printf("    setl al\n");
+            printf("    movzb rax, al\n");
+            break;
+        case ND_LEQ:
+            printf("    cmp rax, rdi\n");
+            printf("    setle al\n");
+            printf("    movzb rax, al\n");
+            break;
         case ND_NUM:
-            ncc_error("");
+        default:
+            ncc_error("Non-implemented node: %d", node->kind);
             break;
     }
 
