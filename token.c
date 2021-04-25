@@ -1,9 +1,10 @@
 #include "ncc.h"
 
-Token* new_token(TokenKind kind, Token* cur, char* str) {
+Token* new_token(TokenKind kind, int len, Token* cur, char* str) {
     Token* tok = calloc(1, sizeof(Token));
     tok->kind = kind;
     tok->str = str;
+    tok->len = len;
     cur->next = tok;
     return tok;
 }
@@ -21,13 +22,13 @@ Token* tokenize(char* p) {
         }
 
         if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
-            cur = new_token(TK_RESERVED, cur, p);
+            cur = new_token(TK_RESERVED, 1, cur, p);
             p++;
             continue;
         }
 
         if (isdigit(*p)) {
-            cur = new_token(TK_NUMBER, cur, p);
+            cur = new_token(TK_NUMBER, 0, cur, p);
             cur->val = strtol(p, &p, 10);
             continue;
         }
@@ -35,7 +36,7 @@ Token* tokenize(char* p) {
         ncc_error("Failed to tokenize, got `%c'", *p);
     }
 
-    new_token(TK_EOF, cur, p);
+    new_token(TK_EOF, 0, cur, p);
     return token = head.next;
 }
 
@@ -46,18 +47,20 @@ int expect_number() {
         return val;
     } else {
         unexpected_token_error();
+        return -1;
     }
 }
 
-void expect(char op) {
-    if (token->kind != TK_RESERVED || *token->str != op) {
+void expect(char* op) {
+    if (!consume(op)) {
         unexpected_token_error();
     }
-    token = token->next;
 }
 
-bool consume(char op) {
-    if (token->kind == TK_RESERVED && *token->str == op) {
+bool consume(char* op) {
+    if (token->kind == TK_RESERVED &&
+        strlen(op) == token->len &&
+        memcmp(token->str, op, token->len) == 0) {
         token = token->next;
         return true;
     }
