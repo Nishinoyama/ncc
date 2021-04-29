@@ -42,6 +42,6 @@ Node* mul();
 Node* unary();
 Node* primary();
 
-void gen();
+void gen(Node* node);
 
 #endif //NCC_PARSER_H
