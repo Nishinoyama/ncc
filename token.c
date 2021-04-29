@@ -32,8 +32,14 @@ Token* tokenize(char* p) {
             continue;
         }
 
-        if (strchr("+-*/()<>", *p)) {
+        if (strchr("+-*/()<>=;", *p)) {
             cur = new_token(TK_RESERVED, 1, cur, p);
+            p+=1;
+            continue;
+        }
+
+        if ('a' <= *p && *p <= 'z') {
+            cur = new_token(TK_INDENT, 1, cur, p);
             p+=1;
             continue;
         }
@@ -52,7 +58,7 @@ Token* tokenize(char* p) {
 }
 
 int expect_number() {
-    if (token->kind == TK_NUMBER) {
+    if (token->kind == TK_NUMBER || token->kind == TK_INDENT) {
         int val = token->val;
         token = token->next;
         return val;
@@ -76,6 +82,15 @@ bool consume(char* op) {
         return true;
     }
     return false;
+}
+
+Token* consume_ident() {
+    if (token->kind == TK_INDENT) {
+        Token* tmp = token;
+        token = token->next;
+        return tmp;
+    }
+    return NULL;
 }
 
 bool at_eof_token() {

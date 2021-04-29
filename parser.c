@@ -15,8 +15,30 @@ Node* new_node_num(int val) {
     return node;
 }
 
+void program() {
+    int i = 0;
+    while (!at_eof_token()) {
+        code[i++] = stmt();
+    }
+    code[i] = NULL;
+}
+
+Node* stmt() {
+    Node* node = expr();
+    expect(";");
+    return node;
+}
+
 Node* expr() {
-    return equality();
+    return assign();
+}
+
+Node* assign() {
+    Node* node = equality();
+    if (consume("=")) {
+       node = new_node(ND_ASN, node, assign());
+    }
+    return node;
 }
 
 Node* equality() {
@@ -89,12 +111,35 @@ Node* primary() {
         expect(")");
         return node;
     }
+    Token* tok = consume_ident();
+    if (tok) {
+        Node* node = calloc(1, sizeof(struct Node));
+        node->kind = ND_LVR;
+        node->offset = (tok->str[0] - 'a' + 1) * 8;
+        return node;
+    }
     return new_node_num(expect_number());
 }
 
 void gen(Node* node) {
     if (node->kind == ND_NUM) {
         printf("    push %d\n", node->val);
+        return;
+    }
+    if (node->kind == ND_LVR) {
+        gen_local_val(node);
+        printf("    pop rax\n");
+        printf("    mov rax, [rax]\n");
+        printf("    push rax\n");
+        return;
+    }
+    if (node->kind == ND_ASN) {
+        gen_local_val(node->lhs);
+        gen(node->rhs);
+        printf("    pop rdi\n");
+        printf("    pop rax\n");
+        printf("    mov [rax], rdi\n");
+        printf("    push rdi\n");
         return;
     }
 
@@ -138,11 +183,25 @@ void gen(Node* node) {
             printf("    setle al\n");
             printf("    movzb rax, al\n");
             break;
+        case ND_ASN:
+            printf("    cmp rax, rdi\n");
+            printf("    setle al\n");
+            printf("    movzb rax, al\n");
         case ND_NUM:
+        case ND_LVR:
         default:
             ncc_error("Non-implemented node: %d", node->kind);
             break;
     }
 
+    printf("    push rax\n");
+}
+
+void gen_local_val(Node* node) {
+    if (node->kind != ND_LVR) {
+        ncc_error("the lhs is not modifiable lvalue");
+    }
+    printf("    mov rax, rbp\n");
+    printf("    sub rax, %d\n", node->offset);
     printf("    push rax\n");
 }

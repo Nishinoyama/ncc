@@ -13,6 +13,8 @@ typedef enum {
     ND_LES, // ND_GRT, = opposite ND_LES
     ND_LEQ, // ND_GEQ, = opposite ND_LEQ
     ND_NUM,
+    ND_ASN, // ASSIGN
+    ND_LVR, // LOCAL VARIABLE
 } NodeKind;
 
 typedef struct Node Node;
@@ -22,19 +24,28 @@ struct Node {
     Node* lhs;
     Node* rhs;
     int val;
+    int offset;
 };
 
+Node* code[100];
+
 /**
- * expr       = equality
+ * program    = stmt*
+ * stmt       = expr ";"
+ * expr       = assign
+ * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
  * relational = add ("<" add | ">" add | "<=" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul )*
  * mul        = unary ("*" unary | "/" unary "-")*
  * unary      = ("+" | "-")? "*" primary | "/" primary "-")*
- * primary    = num | "(" expr ")"
+ * primary    = num | ident | "(" expr ")"
  */
 
+void program();
+Node* stmt();
 Node* expr();
+Node* assign();
 Node* equality();
 Node* relational();
 Node* add();
@@ -42,6 +53,7 @@ Node* mul();
 Node* unary();
 Node* primary();
 
-void gen(Node* node);
+void gen(Node*);
+void gen_local_val(Node*);
 
 #endif //NCC_PARSER_H
