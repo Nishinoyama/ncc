@@ -4,6 +4,10 @@ bool start_with(char* p, char* q) {
     return memcmp(p, q, strlen(q)) == 0;
 }
 
+bool is_alnum_or_under(char c) {
+    return isalnum(c) || c == '_';
+}
+
 Token* new_token(TokenKind kind, int len, Token* cur, char* str) {
     Token* tok = calloc(1, sizeof(Token));
     tok->kind = kind;
@@ -22,6 +26,12 @@ Token* tokenize(char* p) {
     while (*p) {
         if (isspace(*p)) {
             p++;
+            continue;
+        }
+
+        if (start_with(p, "return") && !is_alnum_or_under(p[6])) {
+            cur = new_token(TK_RETURN, 6, cur, p);
+            p += 6;
             continue;
         }
 
@@ -99,6 +109,14 @@ Token* consume_ident() {
         return tmp;
     }
     return NULL;
+}
+
+bool consume_tk(TokenKind tk) {
+    if (token->kind == tk) {
+        token = token->next;
+        return true;
+    }
+    return false;
 }
 
 bool at_eof_token() {

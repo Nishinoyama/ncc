@@ -13,6 +13,7 @@ typedef enum {
     ND_NUM,
     ND_ASN, // ASSIGN
     ND_LVR, // LOCAL VARIABLE
+    ND_RET, // return
 } NodeKind;
 
 typedef struct Node Node;
@@ -29,7 +30,7 @@ Node* code[100];
 
 /**
  * program    = stmt*
- * stmt       = expr ";"
+ * stmt       = expr ";" | "return" expr ";"
  * expr       = assign
  * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
