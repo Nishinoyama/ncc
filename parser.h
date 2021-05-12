@@ -1,8 +1,6 @@
 #ifndef NCC_PARSER_H
 #define NCC_PARSER_H
 
-#include "ncc.h"
-
 typedef enum {
     ND_ADD,
     ND_SUB,

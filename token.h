@@ -2,6 +2,7 @@
 #define NCC_TOKEN_H
 
 #include <stdbool.h>
+
 typedef enum {
     TK_RESERVED,
     TK_INDENT,

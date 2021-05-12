@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "ncc.h"
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs) {
     Node* node = calloc(1, sizeof(Node));
@@ -115,7 +115,7 @@ Node* primary() {
     if (tok) {
         Node* node = calloc(1, sizeof(struct Node));
         node->kind = ND_LVR;
-        node->offset = (tok->str[0] - 'a' + 1) * 8;
+        node->offset = find_lvar(tok)->offset;
         return node;
     }
     return new_node_num(expect_number());

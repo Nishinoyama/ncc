@@ -38,9 +38,17 @@ Token* tokenize(char* p) {
             continue;
         }
 
-        if ('a' <= *p && *p <= 'z') {
+        if (isalpha(*p) || *p == '_') {
+            int len = 0;
             cur = new_token(TK_INDENT, 1, cur, p);
-            p+=1;
+            while (isalnum(*p) || *p == '_') {
+                len++;
+                p+=1;
+            }
+            cur->len = len;
+            if (find_lvar(cur) == NULL) {
+                new_lvar(cur);
+            }
             continue;
         }
 

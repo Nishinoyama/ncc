@@ -61,4 +61,7 @@ assert 1 "a = 1; a;"
 assert 2 "a = 1; b = a; a + b;"
 assert 13 "a = 1; b = 1; c = b + a; d = c + b; e = d + c; f = e + d; g = f + e;"
 
+assert 42 "answer_to_the_ultimate_question_of_life_the_universe_and_everything_is_42 = 42; answer_to_the_ultimate_question_of_life_the_universe_and_everything_is_42;"
+assert 54 "__SIX__ = 6; __NINE__ = 9; __SIX__ * __NINE__;"
+
 echo OK
