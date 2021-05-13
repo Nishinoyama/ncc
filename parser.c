@@ -25,7 +25,34 @@ void program() {
 
 Node* stmt() {
     Node* node;
-    if (consume_tk(TK_RETURN)) {
+    if (consume("if")) {
+        expect("(");
+        node = new_node(ND_IFJ, expr(), NULL);
+        expect(")");
+        node->rhs = stmt();
+        if (consume("else")) {
+            node->rhs = new_node(ND_IFE, node->rhs, stmt());
+        }
+        return node;
+    } else if (consume("while")) {
+        expect("(");
+        node = new_node(ND_WHL, expr(), NULL);
+        expect(")");
+        node->rhs = stmt();
+        return node;
+    } else if (consume("for")) {
+        expect("(");
+        node = new_node(ND_FOR, NULL, NULL);
+        node->lhs = new_node(ND_FOR, expr(), NULL);
+        expect(";");
+        node->lhs->rhs = new_node(ND_FOR, NULL, NULL);
+        node->lhs->rhs->lhs = expr();
+        expect(";");
+        node->lhs->rhs->rhs = expr();
+        expect(")");
+        node->rhs = stmt();
+        return node;
+    } else if (consume("return")) {
         node = new_node(ND_RET, expr(), NULL);
     } else {
         node = expr();
@@ -123,7 +150,9 @@ Node* primary() {
         node->offset = find_lvar(tok)->offset;
         return node;
     }
-    return new_node_num(expect_number());
+    if (token->kind == TK_NUMBER)
+        return new_node_num(expect_number());
+    return NULL;
 }
 
 void gen(Node* node) {
@@ -153,6 +182,59 @@ void gen(Node* node) {
         printf("    mov rsp, rbp\n");
         printf("    pop rbp\n");
         printf("    ret\n");
+        return;
+    }
+    if (node->kind == ND_IFJ) {
+        int cnt = if_stmt_cnt++;
+        gen(node->lhs);
+        printf("    pop rax\n");
+        printf("    cmp rax, 0\n");
+        if (node->rhs->kind == ND_IFE) {
+            Node* else_node = node->rhs;
+            printf("    je  .Lelse%03d\n", cnt);
+            gen(else_node->lhs);
+            printf("    jmp .Lend%03d\n", cnt);
+            printf(".Lelse%03d:\n", cnt);
+            gen(else_node->rhs);
+        } else {
+            printf("    je  .Lend%03d\n", cnt);
+            gen(node->rhs);
+        }
+        printf(".Lend%03d:\n", cnt);
+        return;
+    }
+    if (node->kind == ND_WHL) {
+        int cnt = if_stmt_cnt++;
+        printf(".Lbegin%03d:\n", cnt);
+        gen(node->lhs);
+        printf("    pop rax\n");
+        printf("    cmp rax, 0\n");
+        printf("    je  .Lend%03d\n", cnt);
+        gen(node->rhs);
+        printf("    jmp .Lbegin%03d\n", cnt);
+        printf(".Lend%03d:\n", cnt);
+        return;
+    }
+    if (node->kind == ND_FOR) {
+        int cnt = if_stmt_cnt++;
+        Node* init_clause = node->lhs->lhs;
+        Node* cond_expression = node->lhs->rhs->lhs;
+        Node* iteration_expression = node->lhs->rhs->rhs;
+        if(init_clause)
+            gen(init_clause);
+        printf(".Lbegin%03d:\n", cnt);
+        if(cond_expression)
+            gen(cond_expression);
+        else
+            printf("    push 1\n");
+        printf("    pop rax\n");
+        printf("    cmp rax, 0\n");
+        printf("    je  .Lend%03d\n", cnt);
+        gen(node->rhs);
+        if (iteration_expression)
+            gen(iteration_expression);
+        printf("    jmp .Lbegin%03d\n", cnt);
+        printf(".Lend%03d:\n", cnt);
         return;
     }
 
@@ -200,8 +282,6 @@ void gen(Node* node) {
             printf("    cmp rax, rdi\n");
             printf("    setle al\n");
             printf("    movzb rax, al\n");
-        case ND_NUM:
-        case ND_LVR:
         default:
             ncc_error("Non-implemented node: %d", node->kind);
             break;

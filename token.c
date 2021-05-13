@@ -29,8 +29,32 @@ Token* tokenize(char* p) {
             continue;
         }
 
+        if (start_with(p, "if") && !is_alnum_or_under(p[2])) {
+            cur = new_token(TK_RESERVED, 2, cur, p);
+            p += 2;
+            continue;
+        }
+
+        if (start_with(p, "else") && !is_alnum_or_under(p[4])) {
+            cur = new_token(TK_RESERVED, 4, cur, p);
+            p += 4;
+            continue;
+        }
+
+        if (start_with(p, "while") && !is_alnum_or_under(p[5])) {
+            cur = new_token(TK_RESERVED, 5, cur, p);
+            p += 5;
+            continue;
+        }
+
+        if (start_with(p, "for") && !is_alnum_or_under(p[3])) {
+            cur = new_token(TK_RESERVED, 3, cur, p);
+            p += 3;
+            continue;
+        }
+
         if (start_with(p, "return") && !is_alnum_or_under(p[6])) {
-            cur = new_token(TK_RETURN, 6, cur, p);
+            cur = new_token(TK_RESERVED, 6, cur, p);
             p += 6;
             continue;
         }
@@ -38,13 +62,13 @@ Token* tokenize(char* p) {
         if (start_with(p, "<=") || start_with(p, ">=") ||
             start_with(p, "==") || start_with(p, "!=")) {
             cur = new_token(TK_RESERVED, 2, cur, p);
-            p+=2;
+            p += 2;
             continue;
         }
 
         if (strchr("+-*/()<>=;", *p)) {
             cur = new_token(TK_RESERVED, 1, cur, p);
-            p+=1;
+            p += 1;
             continue;
         }
 
@@ -53,7 +77,7 @@ Token* tokenize(char* p) {
             cur = new_token(TK_INDENT, 1, cur, p);
             while (isalnum(*p) || *p == '_') {
                 len++;
-                p+=1;
+                p += 1;
             }
             cur->len = len;
             if (find_lvar(cur) == NULL) {
@@ -82,7 +106,6 @@ int expect_number() {
         return val;
     } else {
         unexpected_token_error();
-        return -1;
     }
 }
 
@@ -128,5 +151,5 @@ void unexpected_token_error() {
     fprintf(stderr, "%s\n", user_input);
     if(pos > 0) fprintf(stderr, "%*s", pos, " ");
     fprintf(stderr, "^\n");
-    ncc_error("Unexpected Token `%d'\n", token->kind);
+    ncc_error("Unexpected Token `%d'\nToken name \"%s\", len=%d", token->kind, token->str, token->len);
 }

@@ -14,6 +14,10 @@ typedef enum {
     ND_ASN, // ASSIGN
     ND_LVR, // LOCAL VARIABLE
     ND_RET, // return
+    ND_IFJ, // if then jump
+    ND_IFE, // if else
+    ND_WHL, // while
+    ND_FOR,
 } NodeKind;
 
 typedef struct Node Node;
@@ -27,10 +31,15 @@ struct Node {
 };
 
 Node* code[100];
+int if_stmt_cnt;
 
 /**
  * program    = stmt*
- * stmt       = expr ";" | "return" expr ";"
+ * stmt       = expr ";"
+ *              | "if" "(" expr ")" stmt ("else" stmt)?
+ *              | "while" "(" expr ")" stmt
+ *              | "for" "(" expr? ";" expr? ";" expr? ")" stmt
+ *              | "return" expr ";"
  * expr       = assign
  * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
