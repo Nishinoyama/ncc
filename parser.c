@@ -1,5 +1,8 @@
 #include "ncc.h"
 
+Node* code[100];
+int if_stmt_cnt = 0;
+
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs) {
     Node* node = calloc(1, sizeof(Node));
     node->kind = kind;

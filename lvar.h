@@ -10,7 +10,7 @@ struct LVar {
     int offset;
 };
 
-LVar* local_vars;
+extern LVar* local_vars;
 
 LVar* find_lvar(Token*);
 void new_lvar(Token*);

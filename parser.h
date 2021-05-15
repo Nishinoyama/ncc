@@ -30,8 +30,8 @@ struct Node {
     int offset;
 };
 
-Node* code[100];
-int if_stmt_cnt;
+extern Node* code[100];
+extern int if_stmt_cnt;
 
 /**
  * program    = stmt*

@@ -20,8 +20,8 @@ struct Token {
     int len; // token strlen
 };
 
-Token* token;
-char* user_input;
+extern Token* token;
+extern char* user_input;
 
 Token* tokenize(char*);
 int expect_number();

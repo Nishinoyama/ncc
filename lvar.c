@@ -1,5 +1,7 @@
 #include "ncc.h"
 
+LVar* local_vars;
+
 LVar* find_lvar(Token* tok) {
     for (LVar* var = local_vars; var; var = var->next) {
         if (var->len == tok->len && !memcmp(var->name, tok->str, var->len)) {

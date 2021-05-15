@@ -1,5 +1,8 @@
 #include "ncc.h"
 
+Token* token;
+char* user_input;
+
 bool start_with(char* p, char* q) {
     return memcmp(p, q, strlen(q)) == 0;
 }
