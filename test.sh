@@ -82,4 +82,9 @@ assert 100 "x = 0; while(x < 100) x = x + 1; return x;"
 assert 100 "for(x = 0; x < 100; x = x + 1) x + 1; return x;"
 assert 45 "y = 0; for(x = 0; x < 10; x = x + 1) y = x + y; return y;"
 
+assert 9 "{ x = 3; y = 3; z = 3; } return x + y + z;"
+assert 55 "x = 0; y = 1; for(i = 0; i < 10; i = i + 1){ y = x + y; x = y - x; } return x;"
+assert 20 "x = 0; y = 0; z = 0; while(z < 20) { x = x + 1; if( x > 1000 ) { x = 0; y = y + 1; } if( y > 1000 ) { y = 0; z = z + 1; } } return z;"
+assert 106 "x = 0; for( i = 0; i < 100000; i = i + 1 ) { for( j = 0; j < 1000; j = j + 1 ) { x = x + 1; if( x == 314 ) x = 0; } } return x;"
+
 echo OK

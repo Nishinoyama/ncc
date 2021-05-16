@@ -18,6 +18,7 @@ typedef enum {
     ND_IFE, // if else
     ND_WHL, // while
     ND_FOR,
+    ND_BLK, // block
 } NodeKind;
 
 typedef struct Node Node;
@@ -36,6 +37,7 @@ extern int if_stmt_cnt;
 /**
  * program    = stmt*
  * stmt       = expr ";"
+ *              | "{" stmt* "}"
  *              | "if" "(" expr ")" stmt ("else" stmt)?
  *              | "while" "(" expr ")" stmt
  *              | "for" "(" expr? ";" expr? ";" expr? ")" stmt

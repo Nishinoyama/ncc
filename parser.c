@@ -28,7 +28,17 @@ void program() {
 
 Node* stmt() {
     Node* node;
-    if (consume("if")) {
+    if (consume("{")) {
+        Node* seek = node = new_node(ND_BLK, NULL, NULL);
+        while (1) {
+            if (consume("}")) {
+                return node;
+            }
+            seek->lhs = stmt();
+            seek->rhs = new_node(ND_BLK, NULL, NULL);
+            seek = seek->rhs;
+        }
+    } else if (consume("if")) {
         expect("(");
         node = new_node(ND_IFJ, expr(), NULL);
         expect(")");
@@ -248,6 +258,16 @@ void gen(Node* node) {
         }
         printf("    jmp .Lbegin%03d\n", cnt);
         printf(".Lend%03d:\n", cnt);
+        return;
+    }
+    if (node->kind == ND_BLK) {
+        if ( node->lhs == NULL ) {
+            return;
+        }
+        gen(node->lhs);
+        printf("    pop rax\n");
+        gen(node->rhs);
+        printf("    push 0\n");
         return;
     }
 
