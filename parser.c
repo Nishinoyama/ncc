@@ -45,14 +45,20 @@ Node* stmt() {
         return node;
     } else if (consume("for")) {
         expect("(");
-        node = new_node(ND_FOR, NULL, NULL);
-        node->lhs = new_node(ND_FOR, expr(), NULL);
-        expect(";");
+        node = new_node(ND_FOR, new_node(ND_FOR, NULL, NULL), NULL);
+        if (!consume(";")) {
+            node->lhs = new_node(ND_FOR, expr(), NULL);
+            expect(";");
+        }
         node->lhs->rhs = new_node(ND_FOR, NULL, NULL);
-        node->lhs->rhs->lhs = expr();
-        expect(";");
-        node->lhs->rhs->rhs = expr();
-        expect(")");
+        if (!consume(";")) {
+            node->lhs->rhs->lhs = expr();
+            expect(";");
+        }
+        if (!consume(")")) {
+            node->lhs->rhs->rhs = expr();
+            expect(")");
+        }
         node->rhs = stmt();
         return node;
     } else if (consume("return")) {
@@ -153,9 +159,7 @@ Node* primary() {
         node->offset = find_lvar(tok)->offset;
         return node;
     }
-    if (token->kind == TK_NUMBER)
-        return new_node_num(expect_number());
-    return NULL;
+    return new_node_num(expect_number());
 }
 
 void gen(Node* node) {
