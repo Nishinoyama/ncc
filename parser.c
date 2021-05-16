@@ -218,6 +218,7 @@ void gen(Node* node) {
         printf("    cmp rax, 0\n");
         printf("    je  .Lend%03d\n", cnt);
         gen(node->rhs);
+        printf("    pop rax\n");
         printf("    jmp .Lbegin%03d\n", cnt);
         printf(".Lend%03d:\n", cnt);
         return;
@@ -227,8 +228,10 @@ void gen(Node* node) {
         Node* init_clause = node->lhs->lhs;
         Node* cond_expression = node->lhs->rhs->lhs;
         Node* iteration_expression = node->lhs->rhs->rhs;
-        if(init_clause)
+        if(init_clause) {
             gen(init_clause);
+            printf("    pop rax\n");
+        }
         printf(".Lbegin%03d:\n", cnt);
         if(cond_expression)
             gen(cond_expression);
@@ -238,8 +241,11 @@ void gen(Node* node) {
         printf("    cmp rax, 0\n");
         printf("    je  .Lend%03d\n", cnt);
         gen(node->rhs);
-        if (iteration_expression)
+        printf("    pop rax\n");
+        if (iteration_expression) {
             gen(iteration_expression);
+            printf("    pop rax\n");
+        }
         printf("    jmp .Lbegin%03d\n", cnt);
         printf(".Lend%03d:\n", cnt);
         return;
