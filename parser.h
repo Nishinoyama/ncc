@@ -13,6 +13,7 @@ typedef enum {
     ND_NUM,
     ND_ASN, // ASSIGN
     ND_LVR, // LOCAL VARIABLE
+    ND_FNC, // FUNCTION
     ND_RET, // return
     ND_IFJ, // if then jump
     ND_IFE, // if else
@@ -29,6 +30,7 @@ struct Node {
     Node* rhs;
     int val;
     int offset;
+    Token* token;
 };
 
 extern Node* code[100];
@@ -49,7 +51,7 @@ extern int if_stmt_cnt;
  * add        = mul ("+" mul | "-" mul )*
  * mul        = unary ("*" unary | "/" unary "-")*
  * unary      = ("+" | "-")? "*" primary | "/" primary "-")*
- * primary    = num | ident | "(" expr ")"
+ * primary    = num | ident ("(" ")")? | "(" expr ")"
  */
 
 void program();

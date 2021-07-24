@@ -164,15 +164,25 @@ Node* primary() {
     }
     Token* tok = consume_ident();
     if (tok) {
-        Node* node = calloc(1, sizeof(struct Node));
-        node->kind = ND_LVR;
-        node->offset = find_lvar(tok)->offset;
-        return node;
+        if (consume("(")) {
+            Node* node = calloc(1, sizeof(struct Node));
+            node->token = tok;
+            node->kind = ND_FNC;
+            expect(")");
+            return node;
+        } else {
+            Node* node = calloc(1, sizeof(struct Node));
+            node->offset = find_lvar(tok)->offset;
+            node->kind = ND_LVR;
+            return node;
+        }
     }
     return new_node_num(expect_number());
 }
 
 void gen(Node* node) {
+
+    // leaf node
     if (node->kind == ND_NUM) {
         printf("    push %d\n", node->val);
         return;
@@ -181,6 +191,11 @@ void gen(Node* node) {
         gen_local_val(node);
         printf("    pop rax\n");
         printf("    mov rax, [rax]\n");
+        printf("    push rax\n");
+        return;
+    }
+    if (node->kind == ND_FNC) {
+        printf("    call %s\n", token_str(node->token));
         printf("    push rax\n");
         return;
     }
@@ -201,6 +216,9 @@ void gen(Node* node) {
         printf("    ret\n");
         return;
     }
+    // leaf node end
+
+    // statement node
     if (node->kind == ND_IFJ) {
         int cnt = if_stmt_cnt++;
         gen(node->lhs);
@@ -270,6 +288,7 @@ void gen(Node* node) {
         printf("    push 0\n");
         return;
     }
+    // statement node end
 
     gen(node->lhs);
     gen(node->rhs);
@@ -277,6 +296,7 @@ void gen(Node* node) {
     printf("    pop rdi\n");
     printf("    pop rax\n");
 
+    // stem node
     switch (node->kind) {
         case ND_ADD:
             printf("    add rax, rdi\n");
@@ -319,6 +339,7 @@ void gen(Node* node) {
             ncc_error("Non-implemented node: %d", node->kind);
             break;
     }
+    // stem node end
 
     printf("    push rax\n");
 }

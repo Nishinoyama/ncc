@@ -156,3 +156,9 @@ void unexpected_token_error() {
     fprintf(stderr, "^\n");
     ncc_error("Unexpected Token `%d'\nToken name \"%s\", len=%d", token->kind, token->str, token->len);
 }
+
+char* token_str(Token* tk) {
+    char* str = (char*) calloc(1, tk->len+1);
+    return (char*) memcpy(str, tk->str, tk->len);
+    // TODO: avoid memory leaking
+}

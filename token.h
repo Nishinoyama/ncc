@@ -31,5 +31,6 @@ bool consume_tk(TokenKind);
 Token* consume_ident();
 bool at_eof_token();
 void unexpected_token_error();
+char* token_str(Token*);
 
 #endif //NCC_TOKEN_H
