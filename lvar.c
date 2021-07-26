@@ -19,3 +19,11 @@ void new_lvar(Token* tok) {
     var->offset = local_vars == NULL ? 0 : local_vars->offset+8;
     local_vars = var;
 }
+
+int lvar_size(LVar** lvar) {
+    int count = 0;
+    for (LVar* var = local_vars; var; var = var->next) {
+        count++;
+    }
+    return count;
+}

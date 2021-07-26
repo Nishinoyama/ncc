@@ -89,5 +89,7 @@ assert 106 "x = 0; for( i = 0; i < 100000; i = i + 1 ) { for( j = 0; j < 1000; j
 
 assert 0 "foo(); return foo();"
 assert 4 "a = 1; return a + return_3_function();"
+assert 1 "a = 4; return bar(bar(4, 1), bar(a, 2));"
+assert 5 "pi = barbar(3,1,4,1,5,9); e = barbar(2,7,1,8,2,8); return e - pi;"
 
 echo OK

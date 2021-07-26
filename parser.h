@@ -51,7 +51,7 @@ extern int if_stmt_cnt;
  * add        = mul ("+" mul | "-" mul )*
  * mul        = unary ("*" unary | "/" unary "-")*
  * unary      = ("+" | "-")? "*" primary | "/" primary "-")*
- * primary    = num | ident ("(" ")")? | "(" expr ")"
+ * primary    = num | ident ("(" (expr ("," expr)*)? ")")? | "(" expr ")"
  */
 
 void program();

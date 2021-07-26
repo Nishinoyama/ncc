@@ -164,18 +164,25 @@ Node* primary() {
     }
     Token* tok = consume_ident();
     if (tok) {
+        Node* node = calloc(1, sizeof(Node));
         if (consume("(")) {
-            Node* node = calloc(1, sizeof(struct Node));
             node->token = tok;
             node->kind = ND_FNC;
-            expect(")");
-            return node;
+            Node* seek = node;
+            while (!consume(")")) {
+                seek->lhs = expr();
+                seek->rhs = calloc(1, sizeof(Node));
+                seek = seek->rhs;
+                if (!consume(",")) {
+                    expect(")");
+                    break;
+                }
+            }
         } else {
-            Node* node = calloc(1, sizeof(struct Node));
             node->offset = find_lvar(tok)->offset;
             node->kind = ND_LVR;
-            return node;
         }
+        return node;
     }
     return new_node_num(expect_number());
 }
@@ -195,6 +202,14 @@ void gen(Node* node) {
         return;
     }
     if (node->kind == ND_FNC) {
+        Node* seek = node;
+        int i;
+        for ( i = 0; seek->rhs; i++, seek = seek->rhs ) {
+            gen(seek->lhs);
+        }
+        for ( int j = 1; j <= i; j++ ) {
+            printf("    pop %s\n", &("rdi\0rsi\0rdx\0rcx\0r8 \0r9 \0"[(i-j)*4]));
+        }
         printf("    call %s\n", token_str(node->token));
         printf("    push rax\n");
         return;
