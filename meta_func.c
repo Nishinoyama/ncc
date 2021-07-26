@@ -9,6 +9,6 @@ int return_3_function() {
 }
 
 int bar(int a, int b) {
-    printf("%d + %d = %d\n", a, b, a + b);
-    return a + b;
+    printf("%d - %d = %d\n", a, b, a - b);
+    return a - b;
 }
