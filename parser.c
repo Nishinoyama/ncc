@@ -164,14 +164,14 @@ Node* primary() {
     }
     Token* tok = consume_ident();
     if (tok) {
-        Node* node = calloc(1, sizeof(Node));
+        Node* node = new_node(ND_FNC, NULL, NULL);
         if (consume("(")) {
             node->token = tok;
             node->kind = ND_FNC;
             Node* seek = node;
             while (!consume(")")) {
                 seek->lhs = expr();
-                seek->rhs = calloc(1, sizeof(Node));
+                seek->rhs = new_node(ND_FNC, NULL, NULL);
                 seek = seek->rhs;
                 if (!consume(",")) {
                     expect(")");
