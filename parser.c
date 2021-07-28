@@ -22,13 +22,15 @@ Node* new_node_num(int val) {
 void program() {
     int i = 0;
     while (!at_eof_token()) {
-        declare();
+        dec_func();
         code[i++] = function;
     }
     code[i] = NULL;
 }
 
-void declare() {
+void dec_func() {
+    expect("int");
+
     function = new_function(token);
     function->nodes = calloc(100, sizeof (Node*));
     Token* tok = consume_ident();
@@ -37,6 +39,7 @@ void declare() {
     int i = 0;
     expect("(");
     while (!consume(")")) {
+        expect("int");
         Token* para = consume_ident();
         if (!para) unexpected_token_error();
         new_lvar(para);
@@ -105,6 +108,11 @@ Node* stmt() {
         return node;
     } else if (consume("return")) {
         node = new_node(ND_RET, expr(), NULL);
+    } else if (consume("int")) {
+        node = new_node(ND_DEC, NULL, NULL);
+        Token* indent = consume_ident();
+        if (!indent) unexpected_token_error();
+        new_lvar(indent);
     } else {
         node = expr();
     }
@@ -226,6 +234,10 @@ Node* primary() {
 void gen(Node* node) {
 
     // leaf node
+    if (node->kind == ND_DEC) {
+        printf("    push rax\n");
+        return;
+    }
     if (node->kind == ND_NUM) {
         printf("    push %d\n", node->val);
         return;

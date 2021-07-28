@@ -12,7 +12,8 @@ typedef enum {
     ND_LEQ, // ND_GEQ, = opposite ND_LEQ
     ND_NUM,
     ND_ADR, // ADDRESS
-    ND_DRF, // DEREFER
+    ND_DRF, // DEREF
+    ND_DEC, // DECLARE
     ND_ASN, // ASSIGN
     ND_LVR, // LOCAL VARIABLE
     ND_FNC, // FUNCTION
@@ -38,14 +39,15 @@ struct Node {
 extern int if_stmt_cnt;
 
 /**
- * program    = declare*
- * declare    = ident "(" (ident ("," ident)*)? ")" "{" stmt* "}"
+ * program    = dec_func*
+ * dec_func   = "int" ident "(" ("int" ident ("," "int" ident)*)? ")" "{" stmt* "}"
  * stmt       = expr ";"
  *              | "{" stmt* "}"
  *              | "if" "(" expr ")" stmt ("else" stmt)?
  *              | "while" "(" expr ")" stmt
  *              | "for" "(" expr? ";" expr? ";" expr? ")" stmt
  *              | "return" expr ";"
+ *              | "int" ident ";"
  * expr       = assign
  * assign     = equality ("=" assign)?
  * equality   = relational ("==" relational | "!=" relational)*
@@ -57,7 +59,7 @@ extern int if_stmt_cnt;
  */
 
 void program();
-void declare();
+void dec_func();
 Node* stmt();
 Node* expr();
 Node* assign();

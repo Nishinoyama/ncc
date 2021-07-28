@@ -62,6 +62,12 @@ Token* tokenize(char* p) {
             continue;
         }
 
+        if (start_with(p, "int") && !is_alnum_or_under(p[3])) {
+            cur = new_token(TK_RESERVED, 3, cur, p);
+            p += 3;
+            continue;
+        }
+
         if (start_with(p, "<=") || start_with(p, ">=") ||
             start_with(p, "==") || start_with(p, "!=")) {
             cur = new_token(TK_RESERVED, 2, cur, p);

@@ -8,8 +8,8 @@ LVar* find_lvar(Token* tok) {
             return var;
         }
     }
-    new_lvar(tok);
-    return local_vars;
+    ncc_error("The variable %s is not declared.", token_str(tok));
+    return NULL;
 }
 
 void new_lvar(Token* tok) {
