@@ -34,6 +34,10 @@ int main(int argc, char** argv) {
         if (lvars_size(code[i]->lvars) > 0 )
             printf("    sub rsp, %d\n", lvars_size(code[i]->lvars));
 
+        for (int j = 0; j < code[i]->para; j++ ) {
+            printf("    mov [rbp-%d], %s\n", j*8+8, &("rdi\0rsi\0rdx\0rcx\0r8 \0r9 \0"[j*4]));
+        }
+
         for (int j = 0; code[i]->nodes[j]; j++) {
             gen(code[i]->nodes[j]);
             printf("    pop rax\n");

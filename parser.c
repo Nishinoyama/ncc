@@ -30,13 +30,26 @@ void program() {
 
 void declare() {
     function = new_function(token);
-    Token* tok = consume_ident();
-    int i = 0;
-    if (!tok) unexpected_token_error();
-    expect("(");
-    expect(")");
-    expect("{");
     function->nodes = calloc(100, sizeof (Node*));
+    Token* tok = consume_ident();
+    if (!tok) unexpected_token_error();
+
+    int i = 0;
+    expect("(");
+    while (!consume(")")) {
+        Token* para = consume_ident();
+        if (!para) unexpected_token_error();
+        new_lvar(para);
+        i++;
+        if (!consume(",")) {
+            expect(")");
+            break;
+        }
+    }
+    function->para = i;
+
+    i = 0;
+    expect("{");
     while (!consume("}")) {
         function->nodes[i++] = stmt();
     }

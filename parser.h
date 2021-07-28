@@ -37,7 +37,7 @@ extern int if_stmt_cnt;
 
 /**
  * program    = declare*
- * declare    = ident "()" "{" stmt* "}"
+ * declare    = ident "(" (ident ("," ident)*)? ")" "{" stmt* "}"
  * stmt       = expr ";"
  *              | "{" stmt* "}"
  *              | "if" "(" expr ")" stmt ("else" stmt)?

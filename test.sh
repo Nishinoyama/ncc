@@ -97,4 +97,8 @@ assert 2 "main(){ x = 3; y = 5; if (x > y) { return x - y; } else { return y - x
 assert 6 "ncc_func(){ a = 3; return a; } ncc_func2(){ a = 2; return a; } main(){ a = 1; return a * ncc_func() * ncc_func2(); }"
 assert 1 "main(){ a = 4; return bar(bar(4, 1), bar(a, 2)); }"
 
+assert 3 "sub(a, b){ return a - b; } main(){ return sub(7, 4); }"
+assert 21 "summer(a, b, c, d, e, f){ return a + b + c + d + e + f; } main() { return summer(1, 2, 3, 4, 5, 6); }"
+assert 55 "fib(n){ if ( n < 2 ) return n; else return fib(n-2) + fib(n-1); } main(){ return fib(10); }"
+
 echo OK

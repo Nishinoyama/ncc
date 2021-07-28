@@ -5,6 +5,7 @@ typedef struct {
     Token* token;
     LVar* lvars;
     Node** nodes;
+    int para;
 } Function;
 
 extern Function* function;
