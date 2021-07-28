@@ -69,7 +69,7 @@ Token* tokenize(char* p) {
             continue;
         }
 
-        if (strchr("+-*/()<>=;{},", *p)) {
+        if (strchr("+-*/()<>=;{},&", *p)) {
             cur = new_token(TK_RESERVED, 1, cur, p);
             p += 1;
             continue;

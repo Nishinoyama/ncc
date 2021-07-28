@@ -185,6 +185,10 @@ Node* unary() {
         return primary();
     if (consume("-"))
         return new_node(ND_SUB, new_node_num(0), primary());
+    if (consume("*"))
+        return new_node(ND_DRF, unary(), NULL);
+    if (consume("&"))
+        return new_node(ND_ADR, unary(), NULL);
     return primary();
 }
 
@@ -224,6 +228,17 @@ void gen(Node* node) {
     // leaf node
     if (node->kind == ND_NUM) {
         printf("    push %d\n", node->val);
+        return;
+    }
+    if (node->kind == ND_ADR) {
+        gen_local_val(node->lhs);
+        return;
+    }
+    if (node->kind == ND_DRF) {
+        gen(node->lhs);
+        printf("    pop rax\n");
+        printf("    mov rax, [rax]\n");
+        printf("    push rax\n");
         return;
     }
     if (node->kind == ND_LVR) {

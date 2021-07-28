@@ -108,4 +108,6 @@ assert 3 "sub(a, b){ return a - b; } main(){ return sub(7, 4); }"
 assert 21 "summer(a, b, c, d, e, f){ return a + b + c + d + e + f; } main() { return summer(1, 2, 3, 4, 5, 6); }"
 assert 55 "fib(n){ if ( n < 2 ) return n; else return fib(n-2) + fib(n-1); } main(){ return fib(10); }"
 
+assert_main 3 "x = 3; y = &x; return *y;"
+
 echo OK

@@ -11,6 +11,8 @@ typedef enum {
     ND_LES, // ND_GRT, = opposite ND_LES
     ND_LEQ, // ND_GEQ, = opposite ND_LEQ
     ND_NUM,
+    ND_ADR, // ADDRESS
+    ND_DRF, // DEREFER
     ND_ASN, // ASSIGN
     ND_LVR, // LOCAL VARIABLE
     ND_FNC, // FUNCTION
@@ -50,7 +52,7 @@ extern int if_stmt_cnt;
  * relational = add ("<" add | ">" add | "<=" add | ">=" add)*
  * add        = mul ("+" mul | "-" mul )*
  * mul        = unary ("*" unary | "/" unary "-")*
- * unary      = ("+" | "-")? "*" primary | "/" primary "-")*
+ * unary      = ("+" | "-")? primary | "*" unary | "&" unary
  * primary    = num | ident ("(" (expr ("," expr)*)? ")")? | "(" expr ")"
  */
 
