@@ -16,7 +16,7 @@ void new_lvar(Token* tok) {
     var->next = local_vars;
     var->name = tok->str;
     var->len = tok->len;
-    var->offset = local_vars == NULL ? 0 : local_vars->offset+8;
+    var->offset = local_vars == NULL ? 8 : local_vars->offset+8;
     local_vars = var;
 }
 
