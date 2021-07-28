@@ -83,9 +83,9 @@ Token* tokenize(char* p) {
                 p += 1;
             }
             cur->len = len;
-            if (find_lvar(cur) == NULL) {
-                new_lvar(cur);
-            }
+            // if (find_lvar(cur) == NULL) {
+            //     new_lvar(cur);
+            // }
             continue;
         }
 

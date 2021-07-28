@@ -8,7 +8,8 @@ LVar* find_lvar(Token* tok) {
             return var;
         }
     }
-    return NULL;
+    new_lvar(tok);
+    return local_vars;
 }
 
 void new_lvar(Token* tok) {

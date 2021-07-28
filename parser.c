@@ -1,6 +1,7 @@
 #include "ncc.h"
 
-Node* code[100];
+Function* code[100];
+Function* function;
 int if_stmt_cnt = 0;
 
 Node* new_node(NodeKind kind, Node* lhs, Node* rhs) {
@@ -21,9 +22,27 @@ Node* new_node_num(int val) {
 void program() {
     int i = 0;
     while (!at_eof_token()) {
-        code[i++] = stmt();
+        declare();
+        code[i++] = function;
     }
     code[i] = NULL;
+}
+
+void declare() {
+    function = new_function(token);
+    Token* tok = consume_ident();
+    int i = 0;
+    if (!tok) unexpected_token_error();
+    expect("(");
+    expect(")");
+    expect("{");
+    function->nodes = calloc(100, sizeof (Node*));
+    while (!consume("}")) {
+        function->nodes[i++] = stmt();
+    }
+    function->lvars = local_vars;
+    local_vars = NULL;
+    function->nodes[i] = NULL;
 }
 
 Node* stmt() {
@@ -87,7 +106,7 @@ Node* expr() {
 Node* assign() {
     Node* node = equality();
     if (consume("=")) {
-       node = new_node(ND_ASN, node, assign());
+        node = new_node(ND_ASN, node, assign());
     }
     return node;
 }

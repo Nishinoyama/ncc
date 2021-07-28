@@ -33,11 +33,11 @@ struct Node {
     Token* token;
 };
 
-extern Node* code[100];
 extern int if_stmt_cnt;
 
 /**
- * program    = stmt*
+ * program    = declare*
+ * declare    = ident "()" "{" stmt* "}"
  * stmt       = expr ";"
  *              | "{" stmt* "}"
  *              | "if" "(" expr ")" stmt ("else" stmt)?
@@ -55,6 +55,7 @@ extern int if_stmt_cnt;
  */
 
 void program();
+void declare();
 Node* stmt();
 Node* expr();
 Node* assign();

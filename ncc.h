@@ -4,6 +4,7 @@
 #include "token.h"
 #include "parser.h"
 #include "lvar.h"
+#include "function.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
